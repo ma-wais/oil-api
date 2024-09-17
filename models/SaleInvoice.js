@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const saleItemSchema = new mongoose.Schema({
-  description: { type: String, required: true },
+  description: { type: String},
   quantity: { type: Number, required: true },
   weight: { type: String, required: true },
   rate: { type: Number, required: true },
@@ -11,10 +11,10 @@ const saleItemSchema = new mongoose.Schema({
 const saleInvoiceSchema = new mongoose.Schema({
   billNo: { type: String, required: true },
   customerName: { type: String, required: true },
-  date: { type: Date, required: true },
+  date: { type: Date},
   items: [saleItemSchema],
   totalAmount: { type: Number, required: true },
-  receivedCash: { type: Number, required: true },
+  receivedCash: { type: Number},
   previousBalance: { type: Number, default: 0 },
   grandTotal: { type: Number, required: true },
 });

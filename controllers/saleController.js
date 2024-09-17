@@ -1,8 +1,8 @@
 import SaleInvoice from '../models/SaleInvoice.js';
-import Product from '../models/Product.js';
 
 export const createSaleInvoice = async (req, res) => {
-  const { billNo, customerName, date, products: items, receivedCash, previousBalance } = req.body;
+  console.log(req.body);
+  const { billNo, customerName, date, products: items, receivedCash, previousBalance } = req.body
 
   try {
     let totalAmount = 0;
@@ -10,31 +10,6 @@ export const createSaleInvoice = async (req, res) => {
     const formattedReceivedCash = Number(receivedCash);
     const formattedPreviousBalance = Number(previousBalance);
     
-    for (const item of items) {
-      const product = await Product.findOne({ name: item.description });
-      if (!product) {
-        return res.status(404).json({ message: `Product ${item.description} not found` });
-      }
-      
-      const formattedWeight = Number(item.quantity);
-      const formattedRate = Number(item.rate);
-    
-      if (isNaN(formattedWeight) || isNaN(formattedRate)) {
-        return res.status(400).json({ message: "Invalid quantity or rate value" });
-      }
-    
-      if (product.stockInKg < formattedWeight) {
-        return res.status(400).json({ message: `Insufficient stock for ${item.description}` });
-      }
-    
-      product.stockInKg -= formattedWeight;
-      await product.save();
-    
-      item.total = formattedWeight * formattedRate;
-      totalAmount += item.total;
-    }
-    
-
     const grandTotal = totalAmount - formattedReceivedCash + formattedPreviousBalance;
 
     const saleInvoice = new SaleInvoice({
@@ -44,7 +19,7 @@ export const createSaleInvoice = async (req, res) => {
       items: items.map(product => ({
         description: product.description,
         quantity: parseInt(product.quantity),
-        weight: parseFloat(product.weight),
+        weight: product.Unit,
         rate: parseFloat(product.rate),
         total: parseFloat(product.total)
       })),

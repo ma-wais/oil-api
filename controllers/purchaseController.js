@@ -25,7 +25,7 @@ export const createPurchaseInvoice = async (req, res) => {
       items: products.map(product => ({
         description: product.description,
         quantity: parseInt(product.quantity),
-        weight: product.weight,
+        weight: product.Unit,
         rate: parseFloat(product.rate),
         total: parseFloat(product.total)
       })),
