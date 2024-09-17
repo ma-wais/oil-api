@@ -1,0 +1,29 @@
+import mongoose from 'mongoose';
+
+const purchaseInvoiceSchema = new mongoose.Schema({
+  invoiceNumber: { type: String, required: true },
+  date: { type: Date, required: true },  // Now required
+  partyName: { type: String, required: true },
+  items: [
+    {
+      description: { type: String, required: true },
+      quantity: { type: Number, required: true, min: 1 },
+      weight: { type: String, required: true },
+      rate: { type: Number, required: true, min: 0 },
+      total: { type: Number, required: true, min: 0 },
+    },
+  ],
+  details: {
+    carNo: { type: String, trim: true },
+    carRent: { type: Number, min: 0 },
+    gojarkhanWeight: { type: Number, min: 0 },
+    receivedWeight: { type: Number, min: 0 },
+    nag: { type: Number, min: 0 },
+  },
+  totalAmount: { type: Number, required: true, min: 0 },
+  previousBalance: { type: Number, default: 0, min: 0 },
+  grandTotal: { type: Number, required: true, min: 0 },
+});
+
+const PurchaseInvoice = mongoose.model('PurchaseInvoice', purchaseInvoiceSchema);
+export default PurchaseInvoice;
