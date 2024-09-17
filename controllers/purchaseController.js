@@ -1,5 +1,4 @@
 import PurchaseInvoice from '../models/PurchaseInvoice.js';
-import Product from '../models/Product.js';
 
 export const createPurchaseInvoice = async (req, res) => {
   console.log(req.body);
@@ -19,15 +18,6 @@ export const createPurchaseInvoice = async (req, res) => {
   } = req.body;
 
   try {
-
-    for (const product of products) {
-      const dbProduct = await Product.findOne({ name: product.description });
-      if (!dbProduct) return res.status(404).json({ message: `Product ${product.description} not found` });
-
-      dbProduct.stockInKg += parseFloat(product.quantity);
-      await dbProduct.save();
-    }
-
     const purchaseInvoice = new PurchaseInvoice({
       invoiceNumber: billNo,
       date,

@@ -2,11 +2,11 @@ import mongoose from 'mongoose';
 
 const purchaseInvoiceSchema = new mongoose.Schema({
   invoiceNumber: { type: String, required: true },
-  date: { type: Date, required: true },  // Now required
-  partyName: { type: String, required: true },
+  date: { type: Date, default: Date.now },
+  partyName: { type: String},
   items: [
     {
-      description: { type: String, required: true },
+      description: { type: String},
       quantity: { type: Number, required: true, min: 1 },
       weight: { type: String, required: true },
       rate: { type: Number, required: true, min: 0 },
