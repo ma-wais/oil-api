@@ -25,7 +25,7 @@ const router = express.Router();
 
 router.post("/products", createProduct);
 router.get("/products", getProducts);
-router.put("/stock/:id", updateStock);
+router.put("/stock/:name", updateStock);
 
 router.post("/sales", createSaleInvoice);
 router.get("/sales", getSaleInvoices);

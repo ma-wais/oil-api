@@ -57,7 +57,6 @@ export const getPurchaseInvoices = async (req, res) => {
   }
 };
 
-//delete purchase invoice
 export const deletePurchaseInvoice = async (req, res) => {
   try {
     const { id } = req.params;
@@ -71,7 +70,6 @@ export const deletePurchaseInvoice = async (req, res) => {
   }
 };
 
-// edit purchase invoice
 export const editPurchaseInvoice = async (req, res) => {
   try {
     const { id } = req.params;
