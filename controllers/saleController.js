@@ -1,20 +1,23 @@
+import Contact from '../models/Contact.js';
 import SaleInvoice from '../models/SaleInvoice.js';
 
 export const createSaleInvoice = async (req, res) => {
   console.log(req.body);
-  const { billNo, customerName, date, products: items, receivedCash, previousBalance } = req.body
-
+  const { billNo, contact, date, products: items, receivedCash, previousBalance } = req.body;
   try {
-    let totalAmount = 0;
+    const contact = await Contact.findOne({contact});
+    if (!contact || contact.type !== 'customer') {
+      return res.status(404).json({ message: 'Customer not found' });
+    }
 
+    let totalAmount = items.reduce((sum, item) => sum + parseFloat(item.total), 0);
     const formattedReceivedCash = Number(receivedCash);
     const formattedPreviousBalance = Number(previousBalance);
-    
-    const grandTotal = totalAmount - formattedReceivedCash + formattedPreviousBalance;
+    const grandTotal = totalAmount + formattedPreviousBalance;
 
     const saleInvoice = new SaleInvoice({
       billNo,
-      customerName,
+      contact: contactId,
       date,
       items: items.map(product => ({
         description: product.description,
@@ -30,6 +33,12 @@ export const createSaleInvoice = async (req, res) => {
     });
 
     await saleInvoice.save();
+
+    // Update contact balance
+    const balanceDifference = grandTotal - formattedReceivedCash;
+    contact.balance += balanceDifference;
+    await contact.save();
+
     res.status(201).json(saleInvoice);
   } catch (error) {
     res.status(500).json({ message: 'Error creating sale invoice', error });

@@ -1,4 +1,6 @@
 import express from "express";
+import { check } from "express-validator";
+import auth from "../middleware/auth.js";
 import {
   createProduct,
   getProducts,
@@ -17,9 +19,8 @@ import {
   createCrushing,
   getCrushingRecords,
 } from "../controllers/crushingController.js";
-import { check } from "express-validator";
-import auth from "../middleware/auth.js";
 import { login, register, logout, getUser, changePassword } from "../controllers/user.js";
+import { createContact, getContacts, updateBalance } from "../controllers/Contact.js";
 
 const router = express.Router();
 
@@ -36,6 +37,10 @@ router.delete("/purchase/:id", deletePurchaseInvoice);
 
 router.post("/crushings", createCrushing);
 router.get("/crushings", getCrushingRecords);
+
+router.post("/contact", createContact);
+router.get("/contact", getContacts);
+router.put("/balance", updateBalance);
 
 router.post(
   "/register",
