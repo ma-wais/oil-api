@@ -23,14 +23,14 @@ export const getContacts = async (req, res) => {
 
 export const updateBalance = async (req, res) => {
   const { name, amount } = req.body;
-
   try {
     const contact = await Contact.findOne({ name });
     if (!contact) {
       return res.status(404).json({ message: "Contact not found" });
     }
-
-    contact.balance += amount;
+    
+    console.log(contact)
+    contact.openingCr += amount;
     await contact.save();
     res.json(contact);
   } catch (error) {

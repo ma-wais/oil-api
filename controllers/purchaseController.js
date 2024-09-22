@@ -3,17 +3,31 @@ import PurchaseInvoice from '../models/PurchaseInvoice.js';
 
 export const createPurchaseInvoice = async (req, res) => {
   console.log(req.body);
-  const { billNo, date, contact, carNo, carRent, gojarkhanWeight, receivedWeight, nag, previousBalance, products, netAmount, grandTotal } = req.body;
+  const { 
+    billNo, 
+    date, 
+    customerName, 
+    carNo, 
+    carRent, 
+    gojarkhanWeight, 
+    receivedWeight, 
+    nag, 
+    previousBalance, 
+    products, 
+    netAmount, 
+    grandTotal 
+  } = req.body;
+
   try {
-    const contact = await Contact.findOne({ contact });
-    if (!contact || contact.type !== 'party') {
+    const contact = await Contact.findOne({ name: customerName, type: 'party' });
+    if (!contact) {
       return res.status(404).json({ message: 'Party not found' });
     }
 
     const purchaseInvoice = new PurchaseInvoice({
       invoiceNumber: billNo,
-      date,
-      contact: contactId,
+      date: new Date(date),
+      partyName: customerName,
       items: products.map(product => ({
         description: product.description,
         quantity: parseInt(product.quantity),
@@ -35,12 +49,13 @@ export const createPurchaseInvoice = async (req, res) => {
 
     await purchaseInvoice.save();
 
-    contact.balance -= parseFloat(grandTotal);
+    contact.openingDr += parseFloat(grandTotal);
     await contact.save();
 
     return res.status(201).json(purchaseInvoice);
   } catch (error) {
-    return res.status(500).json({ message: 'Error creating purchase invoice', error });
+    console.error('Error creating purchase invoice:', error);
+    return res.status(500).json({ message: 'Error creating purchase invoice', error: error.message });
   }
 };
 

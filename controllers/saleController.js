@@ -3,21 +3,17 @@ import SaleInvoice from '../models/SaleInvoice.js';
 
 export const createSaleInvoice = async (req, res) => {
   console.log(req.body);
-  const { billNo, contact, date, products: items, receivedCash, previousBalance } = req.body;
+  const { billNo, customerName, date, products: items, receivedCash, previousBalance, netAmount, grandTotal } = req.body;
+  
   try {
-    const contact = await Contact.findOne({contact});
-    if (!contact || contact.type !== 'customer') {
+    const contact = await Contact.findOne({ name: customerName, type: 'customer' });
+    if (!contact) {
       return res.status(404).json({ message: 'Customer not found' });
     }
 
-    let totalAmount = items.reduce((sum, item) => sum + parseFloat(item.total), 0);
-    const formattedReceivedCash = Number(receivedCash);
-    const formattedPreviousBalance = Number(previousBalance);
-    const grandTotal = totalAmount + formattedPreviousBalance;
-
     const saleInvoice = new SaleInvoice({
       billNo,
-      contact: contactId,
+      customerName,
       date,
       items: items.map(product => ({
         description: product.description,
@@ -26,22 +22,23 @@ export const createSaleInvoice = async (req, res) => {
         rate: parseFloat(product.rate),
         total: parseFloat(product.total)
       })),
-      totalAmount,
-      receivedCash: formattedReceivedCash,
-      previousBalance: formattedPreviousBalance,
-      grandTotal,
+      totalAmount: parseFloat(netAmount),
+      receivedCash: parseFloat(receivedCash),
+      previousBalance: parseFloat(previousBalance),
+      grandTotal: parseFloat(grandTotal),
     });
 
     await saleInvoice.save();
 
     // Update contact balance
-    const balanceDifference = grandTotal - formattedReceivedCash;
-    contact.balance += balanceDifference;
+    const balanceDifference = parseFloat(grandTotal) - parseFloat(receivedCash);
+    contact.openingDr += balanceDifference;
     await contact.save();
 
     res.status(201).json(saleInvoice);
   } catch (error) {
-    res.status(500).json({ message: 'Error creating sale invoice', error });
+    console.error('Error creating sale invoice:', error);
+    res.status(500).json({ message: 'Error creating sale invoice', error: error.message });
   }
 };
 
