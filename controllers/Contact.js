@@ -30,7 +30,7 @@ export const updateBalance = async (req, res) => {
     }
     
     console.log(contact)
-    contact.openingCr += amount;
+    contact.openingDr += amount;
     await contact.save();
     res.json(contact);
   } catch (error) {
