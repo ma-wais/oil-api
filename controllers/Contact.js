@@ -1,4 +1,5 @@
 import Contact from "../models/Contact.js";
+import Ledger from "../models/Ledger.js";
 
 export const createContact = async (req, res) => {
   try {
@@ -22,18 +23,36 @@ export const getContacts = async (req, res) => {
 };
 
 export const updateBalance = async (req, res) => {
-  const { name, amount } = req.body;
+  const { name, amount, description, billNo, date } = req.body;
   try {
     const contact = await Contact.findOne({ name });
     if (!contact) {
       return res.status(404).json({ message: "Contact not found" });
     }
-    
-    console.log(contact)
+
     contact.openingDr += amount;
     await contact.save();
-    res.json(contact);
+
+    const ledgerEntry = new Ledger({
+      contactName: name,
+      amount,
+      description,
+      billNo,
+      date: date || new Date(),
+    });
+    await ledgerEntry.save();
+
+    res.json({ contact, ledgerEntry });
   } catch (error) {
     res.status(500).json({ message: "Error updating balance", error });
+  }
+};
+
+export const getLedgerRecords = async (req, res) => {
+  try {
+    const ledgerRecords = await Ledger.find();
+    res.json(ledgerRecords);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching ledger records', error });
   }
 };

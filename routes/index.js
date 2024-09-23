@@ -20,7 +20,7 @@ import {
   getCrushingRecords,
 } from "../controllers/crushingController.js";
 import { login, register, logout, getUser, changePassword } from "../controllers/user.js";
-import { createContact, getContacts, updateBalance } from "../controllers/Contact.js";
+import { createContact, getContacts, getLedgerRecords, updateBalance } from "../controllers/Contact.js";
 
 const router = express.Router();
 
@@ -41,6 +41,7 @@ router.get("/crushings", getCrushingRecords);
 router.post("/contact", createContact);
 router.get("/contact", getContacts);
 router.put("/balance", updateBalance);
+router.get('/ledger', getLedgerRecords);
 
 router.post(
   "/register",
