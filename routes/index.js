@@ -46,7 +46,7 @@ router.get("/crushings", getCrushingRecords);
 router.post("/contact", createContact);
 router.get("/contact", getContacts);
 router.put("/balance", updateBalance);
-// router.get('/ledger', getLedgerRecords);
+router.get('/ledgerrecords', getLedgerRecords);
 
 router.post(
   "/register",
