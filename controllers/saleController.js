@@ -1,6 +1,26 @@
 import Contact from '../models/Contact.js';
 import SaleInvoice from '../models/SaleInvoice.js';
 
+export const getSaleLedger = async (req, res) => {
+  try {
+    const { dateFrom, dateTo, customerName } = req.query;
+    console.log(dateFrom, dateTo, customerName);
+
+    const filter = {};
+    if (dateFrom && dateTo) {
+      filter.date = { $gte: new Date(dateFrom), $lte: new Date(dateTo) };
+    }
+    if (customerName) {
+      filter.customerName = { $regex: customerName, $options: 'i' };
+    }
+
+    const sales = await SaleInvoice.find(filter);
+    res.status(200).json(sales);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 export const createSaleInvoice = async (req, res) => {
   console.log(req.body);
   const { billNo, customerName, date, products: items, receivedCash, previousBalance, netAmount, grandTotal } = req.body;

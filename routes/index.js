@@ -9,11 +9,13 @@ import {
 import {
   createSaleInvoice,
   getSaleInvoices,
+  getSaleLedger,
 } from "../controllers/saleController.js";
 import {
   createPurchaseInvoice,
   getPurchaseInvoices,
   deletePurchaseInvoice,
+  getPurchaseLedger,
 } from "../controllers/purchaseController.js";
 import {
   createCrushing,
@@ -35,13 +37,16 @@ router.post("/purchase", createPurchaseInvoice);
 router.get("/purchase", getPurchaseInvoices);
 router.delete("/purchase/:id", deletePurchaseInvoice);
 
+router.get('/ledger', getPurchaseLedger);
+router.get('/sale', getSaleLedger);
+
 router.post("/crushings", createCrushing);
 router.get("/crushings", getCrushingRecords);
 
 router.post("/contact", createContact);
 router.get("/contact", getContacts);
 router.put("/balance", updateBalance);
-router.get('/ledger', getLedgerRecords);
+// router.get('/ledger', getLedgerRecords);
 
 router.post(
   "/register",

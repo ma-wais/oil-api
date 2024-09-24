@@ -93,3 +93,22 @@ export const editPurchaseInvoice = async (req, res) => {
     res.status(500).json({ message: 'Error updating invoice', error });
   }
 };
+
+export const getPurchaseLedger = async (req, res) => {
+  try {
+    const { dateFrom, dateTo, partyName } = req.query;
+
+    const filter = {};
+    if (dateFrom && dateTo) {
+      filter.date = { $gte: new Date(dateFrom), $lte: new Date(dateTo) };
+    }
+    if (partyName) {
+      filter.partyName = { $regex: partyName, $options: 'i' };
+    }
+
+    const purchases = await PurchaseInvoice.find(filter);
+    res.status(200).json(purchases);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
