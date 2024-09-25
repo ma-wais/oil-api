@@ -8,6 +8,7 @@ import {
 } from "../controllers/productController.js";
 import {
   createSaleInvoice,
+  deleteSaleInvoice,
   getSaleInvoices,
   getSaleLedger,
 } from "../controllers/saleController.js";
@@ -33,6 +34,7 @@ router.put("/stock/:name", updateStock);
 
 router.post("/sales", createSaleInvoice);
 router.get("/sales", getSaleInvoices);
+router.delete("/sale/:id", deleteSaleInvoice);
 
 router.post("/purchase", createPurchaseInvoice);
 router.get("/purchase", getPurchaseInvoices);

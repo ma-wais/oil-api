@@ -30,10 +30,22 @@ export const createCrushing = async (req, res) => {
 };
 
 export const getCrushingRecords = async (req, res) => {
+  const { dateFrom, dateTo } = req.query;
+  
+  const query = {};
+
+  if (dateFrom && dateTo) {
+    query.date = {
+      $gte: new Date(dateFrom),
+      $lte: new Date(dateTo),
+    };
+  }
+
   try {
-    const records = await Crushing.find();
+    const records = await Crushing.find(query);
     res.status(200).json(records);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching crushing records', error });
   }
 };
+

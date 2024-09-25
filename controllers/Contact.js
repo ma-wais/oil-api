@@ -50,7 +50,17 @@ export const updateBalance = async (req, res) => {
 
 export const getLedgerRecords = async (req, res) => {
   try {
-    const ledgerRecords = await Ledger.find();
+    const { dateFrom, dateTo, customerName } = req.query;
+    
+    const filter = {};
+    if (dateFrom && dateTo) {
+      filter.date = { $gte: new Date(dateFrom), $lte: new Date(dateTo) };
+    }
+    if (customerName) {
+      filter.customerName = { $regex: customerName, $options: 'i' };
+    }
+
+    const ledgerRecords = await Ledger.find(filter);
     res.json(ledgerRecords);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching ledger records', error });

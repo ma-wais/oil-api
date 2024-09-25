@@ -90,3 +90,16 @@ export const getSaleInvoices = async (req, res) => {
     res.status(500).json({ message: 'Error fetching sale report', error });
   }
 };
+
+export const deleteSaleInvoice = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedInvoice = await SaleInvoice.findByIdAndDelete(id);
+    if (!deletedInvoice) {
+      return res.status(404).json({ message: 'Sale invoice not found' });
+    }
+    res.status(200).json({ message: 'Sale invoice deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting sale invoice', error });
+  }
+};
