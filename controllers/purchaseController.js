@@ -1,5 +1,6 @@
 import Contact from '../models/Contact.js';
 import PurchaseInvoice from '../models/PurchaseInvoice.js';
+import Counter from '../models/Counter.js';
 
 export const createPurchaseInvoice = async (req, res) => {
   console.log(req.body);
@@ -110,5 +111,26 @@ export const getPurchaseLedger = async (req, res) => {
     res.status(200).json(purchases);
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+const getNextSequenceValue = async (sequenceName) => {
+  await Counter.create({ name: 'purchaseInvoice', sequenceValue: 0 });
+
+  const counter = await Counter.findOneAndUpdate(
+    { name: "purchaseInvoice" },
+    { $inc: { sequenceValue: 1 } },  
+    { new: true, upsert: true } 
+  );
+  return counter.sequenceValue;
+};
+
+export const getNextBillNo = async (req, res) => {
+  try {
+    const nextBillNo = await getNextSequenceValue('purchaseInvoice');
+    return res.status(200).json({ nextBillNo });
+  } catch (error) {
+    console.error('Error fetching next bill number:', error);
+    return res.status(500).json({ message: 'Error fetching next bill number', error: error.message });
   }
 };

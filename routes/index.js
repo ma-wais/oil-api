@@ -16,13 +16,14 @@ import {
   getPurchaseInvoices,
   deletePurchaseInvoice,
   getPurchaseLedger,
+  getNextBillNo,
 } from "../controllers/purchaseController.js";
 import {
   createCrushing,
   getCrushingRecords,
 } from "../controllers/crushingController.js";
 import { login, register, logout, getUser, changePassword } from "../controllers/user.js";
-import { createContact, getContacts, getLedgerRecords, updateBalance } from "../controllers/Contact.js";
+import { createContact, getContacts, getLedgerRecords, getTotalBalance, updateBalance } from "../controllers/Contact.js";
 
 const router = express.Router();
 
@@ -47,6 +48,8 @@ router.post("/contact", createContact);
 router.get("/contact", getContacts);
 router.put("/balance", updateBalance);
 router.get('/ledgerrecords', getLedgerRecords);
+router.get('/purchase/nextBillNo', getNextBillNo);
+router.get('/contacts/total-balance', getTotalBalance);
 
 router.post(
   "/register",

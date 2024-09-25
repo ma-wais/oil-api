@@ -56,3 +56,16 @@ export const getLedgerRecords = async (req, res) => {
     res.status(500).json({ message: 'Error fetching ledger records', error });
   }
 };
+
+export const getTotalBalance = async (req, res) => {
+  try {
+    const contacts = await Contact.find();
+
+    const totalDr = contacts.reduce((sum, contact) => sum + contact.openingDr, 0);
+    const totalCr = contacts.reduce((sum, contact) => sum + contact.openingCr, 0);
+
+    res.json({ totalDr, totalCr });
+  } catch (error) {
+    res.status(500).json({ message: "Error calculating total balance", error });
+  }
+};
