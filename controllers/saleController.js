@@ -4,7 +4,6 @@ import SaleInvoice from '../models/SaleInvoice.js';
 export const getSaleLedger = async (req, res) => {
   try {
     const { dateFrom, dateTo, customerName } = req.query;
-    console.log(dateFrom, dateTo, customerName);
 
     const filter = {};
     if (dateFrom && dateTo) {
@@ -22,7 +21,6 @@ export const getSaleLedger = async (req, res) => {
 };
 
 export const createSaleInvoice = async (req, res) => {
-  console.log(req.body);
   const { billNo, customerName, date, products: items, receivedCash, previousBalance, netAmount, grandTotal } = req.body;
   
   try {

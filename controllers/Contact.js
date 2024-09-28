@@ -49,15 +49,20 @@ export const updateBalance = async (req, res) => {
 };
 
 export const getLedgerRecords = async (req, res) => {
+  const { dateFrom, dateTo, customerName } = req.query;
+
   try {
-    const { dateFrom, dateTo, customerName } = req.query;
-    
     const filter = {};
-    if (dateFrom && dateTo) {
-      filter.date = { $gte: new Date(dateFrom), $lte: new Date(dateTo) };
+    if (dateFrom) {
+      filter.date = { ...filter.date, $gte: new Date(dateFrom) };
     }
+    
+    if (dateTo) {
+      filter.date = { ...filter.date, $lte: new Date(dateTo) };
+    }
+    
     if (customerName) {
-      filter.customerName = { $regex: customerName, $options: 'i' };
+      filter.contactName = { $regex: customerName, $options: 'i' };
     }
 
     const ledgerRecords = await Ledger.find(filter);

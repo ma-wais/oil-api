@@ -49,7 +49,9 @@ router.get("/crushings", getCrushingRecords);
 router.post("/contact", createContact);
 router.get("/contact", getContacts);
 router.put("/balance", updateBalance);
+
 router.get('/ledgerrecords', getLedgerRecords);
+
 router.get('/purchase/nextBillNo', getNextBillNo);
 router.get('/contacts/total-balance', getTotalBalance);
 
