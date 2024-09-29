@@ -18,6 +18,7 @@ import {
   deletePurchaseInvoice,
   getPurchaseLedger,
   getNextBillNo,
+  incrementAndGetNextBillNo,
 } from "../controllers/purchaseController.js";
 import {
   createCrushing,
@@ -32,16 +33,15 @@ router.post("/products", createProduct);
 router.get("/products", getProducts);
 router.put("/stock/:name", updateStock);
 
+router.get('/sale', getSaleLedger);
 router.post("/sales", createSaleInvoice);
 router.get("/sales", getSaleInvoices);
 router.delete("/sale/:id", deleteSaleInvoice);
 
+router.get('/ledger', getPurchaseLedger);
 router.post("/purchase", createPurchaseInvoice);
 router.get("/purchase", getPurchaseInvoices);
 router.delete("/purchase/:id", deletePurchaseInvoice);
-
-router.get('/ledger', getPurchaseLedger);
-router.get('/sale', getSaleLedger);
 
 router.post("/crushings", createCrushing);
 router.get("/crushings", getCrushingRecords);
@@ -52,7 +52,9 @@ router.put("/balance", updateBalance);
 
 router.get('/ledgerrecords', getLedgerRecords);
 
-router.get('/purchase/nextBillNo', getNextBillNo);
+router.get('/purchase/currentBillNo', getNextBillNo);
+router.get('/purchase/nextBillNo', incrementAndGetNextBillNo);
+
 router.get('/contacts/total-balance', getTotalBalance);
 
 router.post(

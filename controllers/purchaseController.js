@@ -114,23 +114,37 @@ export const getPurchaseLedger = async (req, res) => {
   }
 };
 
-const getNextSequenceValue = async (sequenceName) => {
-  await Counter.create({ name: sequenceName, sequenceValue: 0 });
-
-  const counter = await Counter.findOneAndUpdate(
-    { name: "purchaseInvoice" },
-    { $inc: { sequenceValue: 1 } },  
-    { new: true, upsert: true } 
-  );
-  return counter.sequenceValue;
-};
-
 export const getNextBillNo = async (req, res) => {
   try {
-    const nextBillNo = await getNextSequenceValue('purchaseInvoice');
-    return res.status(200).json({ nextBillNo });
+    const counter = await Counter.findOne({ name: 'purchas' });
+    const currentBillNo = counter ? counter.sequenceValue : 0;
+    return res.status(200).json({ currentBillNo });
   } catch (error) {
-    console.error('Error fetching next bill number:', error);
-    return res.status(500).json({ message: 'Error fetching next bill number', error: error.message });
+    console.error('Error fetching current bill number:', error);
+    return res.status(500).json({ message: 'Error fetching current bill number', error: error.message });
   }
 };
+
+export const incrementAndGetNextBillNo = async (req, res) => {
+  try {
+    const counter = await Counter.findOneAndUpdate(
+      { name: 'purchas' },
+      { $inc: { sequenceValue: 1 } },
+      { new: true, upsert: true }
+    );
+    return res.status(200).json({ nextBillNo: counter.sequenceValue });
+  } catch (error) {
+    console.error('Error incrementing bill number:', error);
+    return res.status(500).json({ message: 'Error incrementing bill number', error: error.message });
+  }
+};
+
+// export const getNextBillNo = async (req, res) => {
+//   try {
+//     const nextBillNo = await getNextSequenceValue('purchaseInvoice');
+//     return res.status(200).json({ nextBillNo });
+//   } catch (error) {
+//     console.error('Error fetching next bill number:', error);
+//     return res.status(500).json({ message: 'Error fetching next bill number', error: error.message });
+//   }
+// };
