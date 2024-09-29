@@ -2,7 +2,7 @@ import Crushing from '../models/Crushing.js';
 import Product from '../models/Product.js';
 
 export const createCrushing = async (req, res) => {
-  const { date, seedName, crushingAmount } = req.body;
+  const { date, seedName, crushingAmount, partyName } = req.body;
 
   try {
     const product = await Product.findOne({ name: seedName });
@@ -20,6 +20,7 @@ export const createCrushing = async (req, res) => {
       seedName,
       crushingAmount,
       totalLeft: product.stockInKg,
+      partyName
     });
 
     await crushing.save();
@@ -30,7 +31,7 @@ export const createCrushing = async (req, res) => {
 };
 
 export const getCrushingRecords = async (req, res) => {
-  const { dateFrom, dateTo } = req.query;
+  const { dateFrom, dateTo, partyName } = req.query;
   
   const query = {};
 
@@ -41,6 +42,10 @@ export const getCrushingRecords = async (req, res) => {
     };
   }
 
+  if (partyName) {
+    query.partyName = { $regex: partyName, $options: 'i' };
+  }
+
   try {
     const records = await Crushing.find(query);
     res.status(200).json(records);
@@ -48,4 +53,3 @@ export const getCrushingRecords = async (req, res) => {
     res.status(500).json({ message: 'Error fetching crushing records', error });
   }
 };
-

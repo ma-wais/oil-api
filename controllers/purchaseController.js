@@ -115,7 +115,7 @@ export const getPurchaseLedger = async (req, res) => {
 };
 
 const getNextSequenceValue = async (sequenceName) => {
-  await Counter.create({ name: 'purchaseInvoice', sequenceValue: 0 });
+  await Counter.create({ name: sequenceName, sequenceValue: 0 });
 
   const counter = await Counter.findOneAndUpdate(
     { name: "purchaseInvoice" },
