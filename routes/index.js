@@ -26,7 +26,7 @@ import {
   getCrushingRecords,
 } from "../controllers/crushingController.js";
 import { login, register, logout, getUser, changePassword } from "../controllers/user.js";
-import { createContact, getContacts, getLedgerRecords, getTotalBalance, updateBalance } from "../controllers/Contact.js";
+import { createContact, deleteContact, getContacts, getLedgerRecords, getTotalBalance, updateBalance, updateContact } from "../controllers/Contact.js";
 
 const router = express.Router();
 
@@ -50,6 +50,9 @@ router.get("/crushings", getCrushingRecords);
 
 router.post("/contact", createContact);
 router.get("/contact", getContacts);
+router.put("/contact/:id", updateContact);
+router.delete("/contact/:id", deleteContact);
+
 router.put("/balance", updateBalance);
 
 router.get('/ledgerrecords', getLedgerRecords);

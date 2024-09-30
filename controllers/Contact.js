@@ -22,6 +22,27 @@ export const getContacts = async (req, res) => {
   }
 };
 
+export const updateContact = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedData = req.body;
+    const contact = await Contact.findByIdAndUpdate(id, updatedData, { new: true });
+    res.json(contact);
+  } catch (error) {
+    res.status(400).json({ message: "Error updating contact", error });
+  }
+};
+
+export const deleteContact = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await Contact.findByIdAndDelete(id);
+    res.json({ message: "Contact deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error deleting contact", error });
+  }
+};
+
 export const updateBalance = async (req, res) => {
   const { name, amount, description, billNo, date } = req.body;
   try {
