@@ -42,12 +42,25 @@ export const updateStock = async (req, res) => {
       productName: product.name,
       stockInKg: Number(stockInKg),
       partyName: partyName,
-      date: new Date()
+      date: new Date(),
+      totalLeft: product.stockInKg
     });
     await stockUpdate.save();
 
     res.status(200).json({ message: 'Stock updated successfully', product });
   } catch (error) {
     res.status(500).json({ message: 'Error updating stock', error });
+  }
+};
+
+export const getStockUpdates = async (req, res) => {
+  const { productName } = req.query; 
+
+  try {
+    const query = productName ? { productName } : {}; 
+    const stockUpdates = await StockUpdate.find(query).sort({ date: -1 });
+    res.status(200).json(stockUpdates);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching stock updates', error });
   }
 };

@@ -5,6 +5,7 @@ import {
   createProduct,
   getProducts,
   updateStock,
+  getStockUpdates
 } from "../controllers/productController.js";
 import {
   createSaleInvoice,
@@ -32,6 +33,7 @@ const router = express.Router();
 router.post("/products", createProduct);
 router.get("/products", getProducts);
 router.put("/stock/:name", updateStock);
+router.get("/stock-updates", getStockUpdates);
 
 router.get('/sale', getSaleLedger);
 router.post("/sales", createSaleInvoice);
