@@ -1,4 +1,5 @@
 import Product from '../models/Product.js';
+import StockUpdate from '../models/StockUpdate.js';
 
 export const createProduct = async (req, res) => {
   const { name, stockInKg } = req.body;
@@ -28,7 +29,7 @@ export const getProducts = async (req, res) => {
 
 export const updateStock = async (req, res) => {
   const { name } = req.params;
-  const { stockInKg } = req.body;
+  const { stockInKg, partyName } = req.body;
 
   try {
     const product = await Product.findOne({ name });
@@ -37,7 +38,15 @@ export const updateStock = async (req, res) => {
     product.stockInKg += Number(stockInKg);
     await product.save();
 
-    res.status(200).json(product);
+    const stockUpdate = new StockUpdate({
+      productName: product.name,
+      stockInKg: Number(stockInKg),
+      partyName: partyName,
+      date: new Date()
+    });
+    await stockUpdate.save();
+
+    res.status(200).json({ message: 'Stock updated successfully', product });
   } catch (error) {
     res.status(500).json({ message: 'Error updating stock', error });
   }
