@@ -6,9 +6,17 @@ export const getSaleLedger = async (req, res) => {
     const { dateFrom, dateTo, customerName } = req.query;
 
     const filter = {};
+    
     if (dateFrom && dateTo) {
       filter.date = { $gte: new Date(dateFrom), $lte: new Date(dateTo) };
+    } 
+    else if (dateFrom) {
+      filter.date = { $gte: new Date(dateFrom) };
+    } 
+    else if (dateTo) {
+      filter.date = { $lte: new Date(dateTo) };
     }
+
     if (customerName) {
       filter.customerName = { $regex: customerName, $options: 'i' };
     }
