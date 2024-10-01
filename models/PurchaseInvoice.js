@@ -7,10 +7,10 @@ const purchaseInvoiceSchema = new mongoose.Schema({
   items: [
     {
       description: { type: String},
-      quantity: { type: Number, required: true, min: 1 },
-      weight: { type: String, required: true },
-      rate: { type: Number, required: true, min: 0 },
-      total: { type: Number, required: true, min: 0 },
+      quantity: { type: Number, min: 1 },
+      weight: { type: String },
+      rate: { type: Number, min: 0 },
+      total: { type: Number, min: 0 },
     },
   ],
   details: {
@@ -20,7 +20,7 @@ const purchaseInvoiceSchema = new mongoose.Schema({
     receivedWeight: { type: Number, min: 0 },
     nag: { type: Number, min: 0 },
   },
-  totalAmount: { type: Number, required: true, min: 0 },
+  totalAmount: { type: Number, min: 0 },
   previousBalance: { type: Number, default: 0, min: 0 },
   grandTotal: { type: Number, required: true, min: 0 },
 });

@@ -2,10 +2,10 @@ import mongoose from 'mongoose';
 
 const saleItemSchema = new mongoose.Schema({
   description: { type: String},
-  quantity: { type: Number, required: true },
-  weight: { type: String, required: true },
-  rate: { type: Number, required: true },
-  total: { type: Number, required: true },
+  quantity: { type: Number },
+  weight: { type: String },
+  rate: { type: Number},
+  total: { type: Number },
 });
 
 const saleInvoiceSchema = new mongoose.Schema({
