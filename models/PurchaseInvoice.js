@@ -7,7 +7,7 @@ const purchaseInvoiceSchema = new mongoose.Schema({
   items: [
     {
       description: { type: String},
-      quantity: { type: Number, min: 1 },
+      quantity: { type: Number, min: 0 },
       weight: { type: String },
       rate: { type: Number, min: 0 },
       total: { type: Number, min: 0 },
