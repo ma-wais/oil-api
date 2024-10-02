@@ -7,22 +7,22 @@ const purchaseInvoiceSchema = new mongoose.Schema({
   items: [
     {
       description: { type: String},
-      quantity: { type: Number, min: 0 },
+      quantity: { type: Number},
       weight: { type: String },
-      rate: { type: Number, min: 0 },
-      total: { type: Number, min: 0 },
+      rate: { type: Number},
+      total: { type: Number},
     },
   ],
   details: {
     carNo: { type: String},
-    carRent: { type: Number, min: 0 },
-    gojarkhanWeight: { type: Number, min: 0 },
-    receivedWeight: { type: Number, min: 0 },
-    nag: { type: Number, min: 0 },
+    carRent: { type: Number},
+    gojarkhanWeight: { type: Number},
+    receivedWeight: { type: Number},
+    nag: { type: Number},
   },
-  totalAmount: { type: Number, default: 0, min: 0 },
-  previousBalance: { type: Number, default: 0, min: 0 },
-  grandTotal: { type: Number, default: 0, min: 0 },
+  totalAmount: { type: Number, default: 0},
+  previousBalance: { type: Number, default: 0},
+  grandTotal: { type: Number, default: 0},
 });
 
 const PurchaseInvoice = mongoose.model('PurchaseInvoice', purchaseInvoiceSchema);
