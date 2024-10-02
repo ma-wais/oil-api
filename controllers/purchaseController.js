@@ -50,7 +50,7 @@ export const createPurchaseInvoice = async (req, res) => {
 
     await purchaseInvoice.save();
 
-    contact.openingDr += parseFloat(grandTotal);
+    contact.openingCr += parseFloat(grandTotal);
     await contact.save();
 
     return res.status(201).json(purchaseInvoice);
