@@ -72,15 +72,29 @@ export const getPurchaseInvoices = async (req, res) => {
 export const deletePurchaseInvoice = async (req, res) => {
   try {
     const { id } = req.params;
-    const deletedInvoice = await PurchaseInvoice.findByIdAndDelete(id);
-    if (!deletedInvoice) {
+    const invoice = await PurchaseInvoice.findById(id);
+
+    if (!invoice) {
       return res.status(404).json({ message: 'Invoice not found' });
     }
-    res.status(200).json({ message: 'Invoice deleted successfully' });
+
+    const contact = await Contact.findOne({ name: invoice.partyName, type: 'party' });
+    if (!contact) {
+      return res.status(404).json({ message: 'Party not found' });
+    }
+
+    contact.openingCr -= invoice.grandTotal;
+    await contact.save();
+
+    await PurchaseInvoice.findByIdAndDelete(id);
+
+    return res.status(200).json({ message: 'Invoice deleted and contact updated' });
   } catch (error) {
-    res.status(500).json({ message: 'Error deleting invoice', error });
+    console.error('Error deleting purchase invoice:', error);
+    return res.status(500).json({ message: 'Error deleting purchase invoice', error: error.message });
   }
 };
+
 
 export const editPurchaseInvoice = async (req, res) => {
   try {

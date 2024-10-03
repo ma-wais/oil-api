@@ -99,13 +99,26 @@ export const getSaleInvoices = async (req, res) => {
 export const deleteSaleInvoice = async (req, res) => {
   try {
     const { id } = req.params;
-    const deletedInvoice = await SaleInvoice.findByIdAndDelete(id);
-    console.log(deletedInvoice);
-    if (!deletedInvoice) {
+    
+    const invoice = await SaleInvoice.findById(id);
+    
+    if (!invoice) {
       return res.status(404).json({ message: 'Sale invoice not found' });
     }
-    res.status(200).json({ message: 'Sale invoice deleted successfully' });
+
+    const contact = await Contact.findOne({ name: invoice.customerName, type: 'customer' });
+    if (!contact) {
+      return res.status(404).json({ message: 'Customer not found' });
+    }
+
+    contact.openingDr -= invoice.grandTotal;
+    await contact.save();
+
+    await SaleInvoice.findByIdAndDelete(id);
+
+    return res.status(200).json({ message: 'Sale invoice deleted and contact updated' });
   } catch (error) {
-    res.status(500).json({ message: 'Error deleting sale invoice', error });
+    console.error('Error deleting sale invoice:', error);
+    return res.status(500).json({ message: 'Error deleting sale invoice', error: error.message });
   }
 };
