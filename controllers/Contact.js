@@ -51,7 +51,12 @@ export const updateBalance = async (req, res) => {
       return res.status(404).json({ message: "Contact not found" });
     }
 
-    contact.openingDr += amount;
+    if (contact.type === 'customer') {
+      contact.openingCr += amount; 
+    } else if (contact.type === 'party') {
+      contact.openingDr += amount; 
+    }
+
     await contact.save();
 
     const ledgerEntry = new Ledger({
@@ -68,6 +73,7 @@ export const updateBalance = async (req, res) => {
     res.status(500).json({ message: "Error updating balance", error });
   }
 };
+
 
 export const getLedgerRecords = async (req, res) => {
   const { dateFrom, dateTo, customerName } = req.query;
