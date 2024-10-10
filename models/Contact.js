@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const ContactSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  type: { type: String, enum: ['customer', 'party'], required: true },
+  type: { type: String, enum: ['customer', 'party'] },
   openingDr: { type: Number, default: 0 },
   openingCr: { type: Number, default: 0 },
 });

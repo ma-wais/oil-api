@@ -6,6 +6,7 @@ const LedgerSchema = new mongoose.Schema({
   description: { type: String, required: true },
   billNo: { type: String, required: true },
   date: { type: Date, default: Date.now },
+  type: { type: String, enum: ['dr', 'cr'] },
 });
 
 const Ledger = mongoose.model('Ledger', LedgerSchema);

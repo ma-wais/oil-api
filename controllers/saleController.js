@@ -32,7 +32,7 @@ export const createSaleInvoice = async (req, res) => {
   const { billNo, customerName, date, products: items, receivedCash, previousBalance, netAmount, grandTotal } = req.body;
   
   try {
-    const contact = await Contact.findOne({ name: customerName, type: 'customer' });
+    const contact = await Contact.findOne({ name: customerName});
     if (!contact) {
       return res.status(404).json({ message: 'Customer not found' });
     }

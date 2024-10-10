@@ -44,16 +44,16 @@ export const deleteContact = async (req, res) => {
 };
 
 export const updateBalance = async (req, res) => {
-  const { name, amount, description, billNo, date } = req.body;
+  const { name, amount, description, billNo, date, type } = req.body;
   try {
     const contact = await Contact.findOne({ name });
     if (!contact) {
       return res.status(404).json({ message: "Contact not found" });
     }
 
-    if (contact.type === 'customer') {
+    if (type === 'cr') {
       contact.openingCr += amount; 
-    } else if (contact.type === 'party') {
+    } else if (type === 'dr') {
       contact.openingDr += amount; 
     }
 
@@ -65,6 +65,7 @@ export const updateBalance = async (req, res) => {
       description,
       billNo,
       date: date || new Date(),
+      type,
     });
     await ledgerEntry.save();
 
@@ -73,7 +74,6 @@ export const updateBalance = async (req, res) => {
     res.status(500).json({ message: "Error updating balance", error });
   }
 };
-
 
 export const getLedgerRecords = async (req, res) => {
   const { dateFrom, dateTo, customerName } = req.query;

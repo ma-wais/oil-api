@@ -20,7 +20,7 @@ export const createPurchaseInvoice = async (req, res) => {
   } = req.body;
 
   try {
-    const contact = await Contact.findOne({ name: customerName, type: 'party' });
+    const contact = await Contact.findOne({ name: customerName});
     if (!contact) {
       return res.status(404).json({ message: 'Party not found' });
     }
@@ -94,7 +94,6 @@ export const deletePurchaseInvoice = async (req, res) => {
     return res.status(500).json({ message: 'Error deleting purchase invoice', error: error.message });
   }
 };
-
 
 export const editPurchaseInvoice = async (req, res) => {
   try {
