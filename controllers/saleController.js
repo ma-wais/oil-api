@@ -106,7 +106,7 @@ export const deleteSaleInvoice = async (req, res) => {
       return res.status(404).json({ message: 'Sale invoice not found' });
     }
 
-    const contact = await Contact.findOne({ name: invoice.customerName, type: 'customer' });
+    const contact = await Contact.findOne({ name: invoice.customerName});
     if (!contact) {
       return res.status(404).json({ message: 'Customer not found' });
     }

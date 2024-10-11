@@ -78,7 +78,7 @@ export const deletePurchaseInvoice = async (req, res) => {
       return res.status(404).json({ message: 'Invoice not found' });
     }
 
-    const contact = await Contact.findOne({ name: invoice.partyName, type: 'party' });
+    const contact = await Contact.findOne({ name: invoice.partyName});
     if (!contact) {
       return res.status(404).json({ message: 'Party not found' });
     }
