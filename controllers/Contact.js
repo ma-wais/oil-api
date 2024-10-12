@@ -3,6 +3,7 @@ import Ledger from "../models/Ledger.js";
 
 export const createContact = async (req, res) => {
   try {
+    console.log(req.body);
     const contact = new Contact(req.body);
     await contact.save();
     res.status(201).json(contact);
