@@ -54,7 +54,6 @@ router.put("/contact/:id", updateContact);
 router.delete("/contact/:id", deleteContact);
 
 router.put("/balance", updateBalance);
-
 router.get('/ledgerrecords', getLedgerRecords);
 
 router.get('/purchase/currentBillNo', getNextBillNo);

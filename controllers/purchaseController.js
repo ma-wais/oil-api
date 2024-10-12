@@ -109,13 +109,21 @@ export const editPurchaseInvoice = async (req, res) => {
 };
 
 export const getPurchaseLedger = async (req, res) => {
+  console.log(req.query);
   try {
     const { dateFrom, dateTo, partyName } = req.query;
 
     const filter = {};
     if (dateFrom && dateTo) {
       filter.date = { $gte: new Date(dateFrom), $lte: new Date(dateTo) };
+    } 
+    else if (dateFrom) {
+      filter.date = { $gte: new Date(dateFrom) };
+    } 
+    else if (dateTo) {
+      filter.date = { $lte: new Date(dateTo) };
     }
+
     if (partyName) {
       filter.partyName = { $regex: partyName, $options: 'i' };
     }
