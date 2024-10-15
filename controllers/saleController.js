@@ -56,8 +56,7 @@ export const createSaleInvoice = async (req, res) => {
 
     await saleInvoice.save();
 
-    const balanceDifference = parseFloat(grandTotal) - parseFloat(receivedCash);
-    contact.openingDr += balanceDifference;
+    contact.openingDr = parseFloat(grandTotal);
     await contact.save();
 
     res.status(201).json(saleInvoice);
