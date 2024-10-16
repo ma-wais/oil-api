@@ -5,7 +5,7 @@ import {
   createProduct,
   getProducts,
   updateStock,
-  getStockUpdates
+  getStockUpdates,
 } from "../controllers/productController.js";
 import {
   createSaleInvoice,
@@ -25,8 +25,23 @@ import {
   createCrushing,
   getCrushingRecords,
 } from "../controllers/crushingController.js";
-import { login, register, logout, getUser, changePassword } from "../controllers/user.js";
-import { createContact, deleteContact, getContacts, getLedgerRecords, getTotalBalance, updateBalance, updateContact } from "../controllers/Contact.js";
+import {
+  login,
+  register,
+  logout,
+  getUser,
+  changePassword,
+} from "../controllers/user.js";
+import {
+  createContact,
+  deleteContact,
+  deleteLedgerRecord,
+  getContacts,
+  getLedgerRecords,
+  getTotalBalance,
+  updateBalance,
+  updateContact,
+} from "../controllers/Contact.js";
 
 const router = express.Router();
 
@@ -35,12 +50,12 @@ router.get("/products", getProducts);
 router.put("/stock/:name", updateStock);
 router.get("/stock-updates", getStockUpdates);
 
-router.get('/sale', getSaleLedger);
+router.get("/sale", getSaleLedger);
 router.post("/sales", createSaleInvoice);
 router.get("/sales", getSaleInvoices);
 router.delete("/sale/:id", deleteSaleInvoice);
 
-router.get('/ledger', getPurchaseLedger);
+router.get("/ledger", getPurchaseLedger);
 router.post("/purchase", createPurchaseInvoice);
 router.get("/purchase", getPurchaseInvoices);
 router.delete("/purchase/:id", deletePurchaseInvoice);
@@ -54,12 +69,13 @@ router.put("/contact/:id", updateContact);
 router.delete("/contact/:id", deleteContact);
 
 router.put("/balance", updateBalance);
-router.get('/ledgerrecords', getLedgerRecords);
+router.get("/ledgerrecords", getLedgerRecords);
+router.delete("/ledgerrecord/:id", deleteLedgerRecord);
 
-router.get('/purchase/currentBillNo', getNextBillNo);
-router.get('/purchase/nextBillNo', incrementAndGetNextBillNo);
+router.get("/purchase/currentBillNo", getNextBillNo);
+router.get("/purchase/nextBillNo", incrementAndGetNextBillNo);
 
-router.get('/contacts/total-balance', getTotalBalance);
+router.get("/contacts/total-balance", getTotalBalance);
 
 router.post(
   "/register",

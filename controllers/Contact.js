@@ -100,6 +100,34 @@ export const getLedgerRecords = async (req, res) => {
   }
 };
 
+export const deleteLedgerRecord = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const deletedRecord = await Ledger.findById(id);
+    if (!deletedRecord) {
+      return res.status(404).json({ message: 'Ledger record not found' });
+    }
+
+    const contact = await Contact.findOne({ name: deletedRecord.contactName });
+    if (!contact) {
+      return res.status(404).json({ message: 'Contact not found' });
+    }
+
+    if (deletedRecord.type === 'dr') {
+      contact.openingDr = Math.max(0, contact.openingDr - deletedRecord.amount);
+    } else if (deletedRecord.type === 'cr') {
+      contact.openingCr = Math.max(0, contact.openingCr - deletedRecord.amount);
+    }
+
+    await contact.save();
+    await Ledger.findByIdAndDelete(id);
+    res.json({ message: 'Ledger record deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting ledger record', error });
+  }
+};
+
+
 export const getTotalBalance = async (req, res) => {
   try {
     const contacts = await Contact.find();
