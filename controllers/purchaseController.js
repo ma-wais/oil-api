@@ -113,18 +113,20 @@ export const getPurchaseLedger = async (req, res) => {
     const { dateFrom, dateTo, partyName } = req.query;
 
     const filter = {};
+
     if (dateFrom && dateTo) {
       filter.date = { $gte: new Date(dateFrom), $lte: new Date(dateTo) };
-    } 
-    else if (dateFrom) {
+    } else if (dateFrom) {
       filter.date = { $gte: new Date(dateFrom) };
-    } 
-    else if (dateTo) {
+    } else if (dateTo) {
       filter.date = { $lte: new Date(dateTo) };
     }
 
     if (partyName) {
-      filter.partyName = { $regex: partyName, $options: 'i' };
+      const decodedPartyName = decodeURIComponent(partyName);
+      const escapeRegex = (string) => string.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+      const sanitizedPartyName = escapeRegex(decodedPartyName);
+      filter.partyName = { $regex: sanitizedPartyName, $options: 'i' };
     }
 
     const purchases = await PurchaseInvoice.find(filter);
