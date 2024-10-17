@@ -77,28 +77,37 @@ export const updateBalance = async (req, res) => {
 };
 
 export const getLedgerRecords = async (req, res) => {
-  const { dateFrom, dateTo, customerName } = req.query;
+  let { dateFrom = "1970-01-01", dateTo = new Date().toISOString().split('T')[0], customerName } = req.query;
+
+  console.log("Raw query params:", req.query);
+  console.log("Processed dateFrom:", dateFrom, "dateTo:", dateTo, "customerName:", customerName);
 
   try {
     const filter = {};
+
     if (dateFrom) {
       filter.date = { ...filter.date, $gte: new Date(dateFrom) };
     }
-    
     if (dateTo) {
       filter.date = { ...filter.date, $lte: new Date(dateTo) };
     }
-    
+
     if (customerName) {
-      filter.contactName = { $regex: customerName, $options: 'i' };
+      const decodedCustomerName = decodeURIComponent(customerName);
+      const escapeRegex = (string) => string.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+      const sanitizedCustomerName = escapeRegex(decodedCustomerName);
+      filter.contactName = { $regex: sanitizedCustomerName, $options: 'i' };
     }
 
     const ledgerRecords = await Ledger.find(filter);
+
     res.json(ledgerRecords);
   } catch (error) {
+    console.error("Error fetching ledger records:", error);
     res.status(500).json({ message: 'Error fetching ledger records', error });
   }
 };
+
 
 export const deleteLedgerRecord = async (req, res) => {
   const { id } = req.params;
