@@ -136,13 +136,21 @@ export const deleteLedgerRecord = async (req, res) => {
   }
 };
 
-
 export const getTotalBalance = async (req, res) => {
   try {
     const contacts = await Contact.find();
 
-    const totalDr = contacts.reduce((sum, contact) => sum + contact.openingDr, 0);
-    const totalCr = contacts.reduce((sum, contact) => sum + contact.openingCr, 0);
+    let totalDr = 0;
+    let totalCr = 0;
+
+    contacts.forEach(contact => {
+      const netBalance = contact.openingDr - contact.openingCr;
+      if (netBalance > 0) {
+        totalDr += netBalance;
+      } else {
+        totalCr += Math.abs(netBalance);
+      }
+    });
 
     res.json({ totalDr, totalCr });
   } catch (error) {
