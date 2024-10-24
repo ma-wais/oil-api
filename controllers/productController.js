@@ -29,7 +29,7 @@ export const getProducts = async (req, res) => {
 
 export const updateStock = async (req, res) => {
   const { name } = req.params;
-  const { stockInKg, partyName } = req.body;
+  const { stockInKg, partyName, date } = req.body;
 
   try {
     const product = await Product.findOne({ name });
@@ -42,7 +42,7 @@ export const updateStock = async (req, res) => {
       productName: product.name,
       stockInKg: Number(stockInKg),
       partyName: partyName,
-      date: new Date(),
+      date,
       totalLeft: product.stockInKg
     });
     await stockUpdate.save();
