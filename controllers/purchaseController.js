@@ -1,9 +1,9 @@
 import Contact from '../models/Contact.js';
 import PurchaseInvoice from '../models/PurchaseInvoice.js';
 import Counter from '../models/Counter.js';
+import Ledger from '../models/Ledger.js';
 
 export const createPurchaseInvoice = async (req, res) => {
-  console.log(req.body);
   const { 
     billNo, 
     date, 
@@ -49,8 +49,20 @@ export const createPurchaseInvoice = async (req, res) => {
     });
 
     await purchaseInvoice.save();
-    contact.openingCr = parseFloat(grandTotal);
-    await contact.save();
+    
+    const currentCr = parseFloat(contact.openingCr || 0);
+    contact.openingCr = currentCr + parseFloat(netAmount);
+    
+    const purchaseLedger = new Ledger({
+      contactName: customerName,
+      amount: parseFloat(netAmount),
+      description: `Purchase Invoice ${billNo}`,
+      billNo,
+      date: date || new Date(),
+      type: 'cr'
+    });
+
+    await Promise.all([contact.save(), purchaseLedger.save()]);
 
     return res.status(201).json(purchaseInvoice);
   } catch (error) {
@@ -77,17 +89,25 @@ export const deletePurchaseInvoice = async (req, res) => {
       return res.status(404).json({ message: 'Invoice not found' });
     }
 
-    const contact = await Contact.findOne({ name: invoice.partyName});
+    const contact = await Contact.findOne({ name: invoice.partyName });
     if (!contact) {
       return res.status(404).json({ message: 'Party not found' });
     }
 
-    contact.openingCr -= invoice.grandTotal;
-    await contact.save();
+    await Ledger.deleteOne({
+      contactName: invoice.partyName,
+      billNo: invoice.invoiceNumber,
+      description: `Purchase Invoice ${invoice.invoiceNumber}`
+    });
 
-    await PurchaseInvoice.findByIdAndDelete(id);
+    contact.openingCr = parseFloat(contact.openingCr) - parseFloat(invoice.totalAmount);
+    
+    await Promise.all([
+      contact.save(),
+      PurchaseInvoice.findByIdAndDelete(id)
+    ]);
 
-    return res.status(200).json({ message: 'Invoice deleted and contact updated' });
+    return res.status(200).json({ message: 'Purchase invoice and related ledger entry deleted, contact updated' });
   } catch (error) {
     console.error('Error deleting purchase invoice:', error);
     return res.status(500).json({ message: 'Error deleting purchase invoice', error: error.message });

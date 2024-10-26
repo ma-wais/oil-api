@@ -1,4 +1,5 @@
 import Contact from '../models/Contact.js';
+import Ledger from '../models/Ledger.js';
 import SaleInvoice from '../models/SaleInvoice.js';
 
 export const getSaleLedger = async (req, res) => {
@@ -57,8 +58,33 @@ export const createSaleInvoice = async (req, res) => {
 
     await saleInvoice.save();
 
-    contact.openingDr = parseFloat(grandTotal);
-    await contact.save();
+    const currentDr = parseFloat(contact.openingDr || 0);
+    const currentCr = parseFloat(contact.openingCr || 0);
+    
+    contact.openingDr = currentDr + parseFloat(netAmount) - parseFloat(receivedCash);
+    
+    const saleLedger = new Ledger({
+      contactName: customerName,
+      amount: parseFloat(netAmount),
+      description: `Sale Invoice ${billNo}`,
+      billNo,
+      date: date || new Date(),
+      type: 'dr'
+    });
+
+    if (parseFloat(receivedCash) > 0) {
+      const cashLedger = new Ledger({
+        contactName: customerName,
+        amount: parseFloat(receivedCash),
+        description: `Cash Received against ${billNo}`,
+        billNo,
+        date: date || new Date(),
+        type: 'cr'
+      });
+      await cashLedger.save();
+    }
+
+    await Promise.all([contact.save(), saleLedger.save()]);
 
     res.status(201).json(saleInvoice);
   } catch (error) {
@@ -106,17 +132,29 @@ export const deleteSaleInvoice = async (req, res) => {
       return res.status(404).json({ message: 'Sale invoice not found' });
     }
 
-    const contact = await Contact.findOne({ name: invoice.customerName});
+    const contact = await Contact.findOne({ name: invoice.customerName });
     if (!contact) {
       return res.status(404).json({ message: 'Customer not found' });
     }
 
-    contact.openingDr -= invoice.grandTotal;
-    await contact.save();
+    await Ledger.deleteMany({
+      contactName: invoice.customerName,
+      billNo: invoice.billNo,
+      $or: [
+        { description: `Sale Invoice ${invoice.billNo}` },
+        { description: `Cash Received against ${invoice.billNo}` }
+      ]
+    });
 
-    await SaleInvoice.findByIdAndDelete(id);
+    const subtraction = invoice.totalAmount - invoice.receivedCash;
+    contact.openingDr = parseFloat(contact.openingDr) - parseFloat(subtraction);
+    
+    await Promise.all([
+      contact.save(),
+      SaleInvoice.findByIdAndDelete(id)
+    ]);
 
-    return res.status(200).json({ message: 'Sale invoice deleted and contact updated' });
+    return res.status(200).json({ message: 'Sale invoice and related ledger entries deleted, contact updated' });
   } catch (error) {
     console.error('Error deleting sale invoice:', error);
     return res.status(500).json({ message: 'Error deleting sale invoice', error: error.message });

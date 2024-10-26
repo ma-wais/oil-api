@@ -108,7 +108,6 @@ export const getLedgerRecords = async (req, res) => {
   }
 };
 
-
 export const deleteLedgerRecord = async (req, res) => {
   const { id } = req.params;
   try {
