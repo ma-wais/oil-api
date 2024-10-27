@@ -56,11 +56,9 @@ export const createSaleInvoice = async (req, res) => {
       grandTotal: parseFloat(grandTotal),
     });
 
-    await saleInvoice.save();
+    const savedInvoice = await saleInvoice.save();
 
     const currentDr = parseFloat(contact.openingDr || 0);
-    const currentCr = parseFloat(contact.openingCr || 0);
-    
     contact.openingDr = currentDr + parseFloat(netAmount) - parseFloat(receivedCash);
     
     const saleLedger = new Ledger({
@@ -69,7 +67,8 @@ export const createSaleInvoice = async (req, res) => {
       description: `Sale Invoice ${billNo}`,
       billNo,
       date: date || new Date(),
-      type: 'dr'
+      type: 'dr',
+      saleInvoice: savedInvoice._id
     });
 
     if (parseFloat(receivedCash) > 0) {
@@ -79,7 +78,8 @@ export const createSaleInvoice = async (req, res) => {
         description: `Cash Received against ${billNo}`,
         billNo,
         date: date || new Date(),
-        type: 'cr'
+        type: 'cr',
+        saleInvoice: savedInvoice._id
       });
       await cashLedger.save();
     }

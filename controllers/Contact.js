@@ -27,7 +27,9 @@ export const updateContact = async (req, res) => {
   try {
     const { id } = req.params;
     const updatedData = req.body;
-    const contact = await Contact.findByIdAndUpdate(id, updatedData, { new: true });
+    const contact = await Contact.findByIdAndUpdate(id, updatedData, {
+      new: true,
+    });
     res.json(contact);
   } catch (error) {
     res.status(400).json({ message: "Error updating contact", error });
@@ -52,10 +54,10 @@ export const updateBalance = async (req, res) => {
       return res.status(404).json({ message: "Contact not found" });
     }
 
-    if (type === 'cr') {
-      contact.openingCr += amount; 
-    } else if (type === 'dr') {
-      contact.openingDr += amount; 
+    if (type === "cr") {
+      contact.openingCr += amount;
+    } else if (type === "dr") {
+      contact.openingDr += amount;
     }
 
     await contact.save();
@@ -77,10 +79,21 @@ export const updateBalance = async (req, res) => {
 };
 
 export const getLedgerRecords = async (req, res) => {
-  let { dateFrom = "1970-01-01", dateTo = new Date().toISOString().split('T')[0], customerName } = req.query;
+  let {
+    dateFrom = "1970-01-01",
+    dateTo = new Date().toISOString().split("T")[0],
+    customerName,
+  } = req.query;
 
   console.log("Raw query params:", req.query);
-  console.log("Processed dateFrom:", dateFrom, "dateTo:", dateTo, "customerName:", customerName);
+  console.log(
+    "Processed dateFrom:",
+    dateFrom,
+    "dateTo:",
+    dateTo,
+    "customerName:",
+    customerName
+  );
 
   try {
     const filter = {};
@@ -94,17 +107,20 @@ export const getLedgerRecords = async (req, res) => {
 
     if (customerName) {
       const decodedCustomerName = decodeURIComponent(customerName);
-      const escapeRegex = (string) => string.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+      const escapeRegex = (string) =>
+        string.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&");
       const sanitizedCustomerName = escapeRegex(decodedCustomerName);
-      filter.contactName = { $regex: sanitizedCustomerName, $options: 'i' };
+      filter.contactName = { $regex: sanitizedCustomerName, $options: "i" };
     }
 
-    const ledgerRecords = await Ledger.find(filter);
+    const ledgerRecords = await Ledger.find(filter)
+      .populate("saleInvoice")
+      .populate("purchaseInvoice");
 
     res.json(ledgerRecords);
   } catch (error) {
     console.error("Error fetching ledger records:", error);
-    res.status(500).json({ message: 'Error fetching ledger records', error });
+    res.status(500).json({ message: "Error fetching ledger records", error });
   }
 };
 
@@ -113,25 +129,25 @@ export const deleteLedgerRecord = async (req, res) => {
   try {
     const deletedRecord = await Ledger.findById(id);
     if (!deletedRecord) {
-      return res.status(404).json({ message: 'Ledger record not found' });
+      return res.status(404).json({ message: "Ledger record not found" });
     }
 
     const contact = await Contact.findOne({ name: deletedRecord.contactName });
     if (!contact) {
-      return res.status(404).json({ message: 'Contact not found' });
+      return res.status(404).json({ message: "Contact not found" });
     }
 
-    if (deletedRecord.type === 'dr') {
+    if (deletedRecord.type === "dr") {
       contact.openingDr = Math.max(0, contact.openingDr - deletedRecord.amount);
-    } else if (deletedRecord.type === 'cr') {
+    } else if (deletedRecord.type === "cr") {
       contact.openingCr = Math.max(0, contact.openingCr - deletedRecord.amount);
     }
 
     await contact.save();
     await Ledger.findByIdAndDelete(id);
-    res.json({ message: 'Ledger record deleted successfully' });
+    res.json({ message: "Ledger record deleted successfully" });
   } catch (error) {
-    res.status(500).json({ message: 'Error deleting ledger record', error });
+    res.status(500).json({ message: "Error deleting ledger record", error });
   }
 };
 
@@ -142,7 +158,7 @@ export const getTotalBalance = async (req, res) => {
     let totalDr = 0;
     let totalCr = 0;
 
-    contacts.forEach(contact => {
+    contacts.forEach((contact) => {
       const netBalance = contact.openingDr - contact.openingCr;
       if (netBalance > 0) {
         totalDr += netBalance;

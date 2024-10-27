@@ -48,8 +48,8 @@ export const createPurchaseInvoice = async (req, res) => {
       grandTotal: parseFloat(grandTotal),
     });
 
-    await purchaseInvoice.save();
-    
+    const savedInvoice = await purchaseInvoice.save();
+
     const currentCr = parseFloat(contact.openingCr || 0);
     contact.openingCr = currentCr + parseFloat(netAmount);
     
@@ -59,7 +59,8 @@ export const createPurchaseInvoice = async (req, res) => {
       description: `Purchase Invoice ${billNo}`,
       billNo,
       date: date || new Date(),
-      type: 'cr'
+      type: 'cr',
+      purchaseInvoice: savedInvoice._id
     });
 
     await Promise.all([contact.save(), purchaseLedger.save()]);

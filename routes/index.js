@@ -50,12 +50,12 @@ router.get("/products", getProducts);
 router.put("/stock/:name", updateStock);
 router.get("/stock-updates", getStockUpdates);
 
-router.get("/sale", getSaleLedger);
+// router.get("/sale", getSaleLedger);
+// router.get("/ledger", getPurchaseLedger);
 router.post("/sales", createSaleInvoice);
 router.get("/sales", getSaleInvoices);
 router.delete("/sale/:id", deleteSaleInvoice);
 
-router.get("/ledger", getPurchaseLedger);
 router.post("/purchase", createPurchaseInvoice);
 router.get("/purchase", getPurchaseInvoices);
 router.delete("/purchase/:id", deletePurchaseInvoice);
