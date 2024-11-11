@@ -6,6 +6,7 @@ import {
   getProducts,
   updateStock,
   getStockUpdates,
+  deleteStockUpdate,
 } from "../controllers/productController.js";
 import {
   createSaleInvoice,
@@ -24,6 +25,7 @@ import {
 import {
   createCrushing,
   getCrushingRecords,
+  deleteCrushing,
 } from "../controllers/crushingController.js";
 import {
   login,
@@ -47,6 +49,8 @@ const router = express.Router();
 
 router.post("/products", createProduct);
 router.get("/products", getProducts);
+router.delete("/stock/:id", deleteStockUpdate);
+
 router.put("/stock/:name", updateStock);
 router.get("/stock-updates", getStockUpdates);
 
@@ -62,6 +66,7 @@ router.delete("/purchase/:id", deletePurchaseInvoice);
 
 router.post("/crushings", createCrushing);
 router.get("/crushings", getCrushingRecords);
+router.delete("/crushing/:id", deleteCrushing);
 
 router.post("/contact", createContact);
 router.get("/contact", getContacts);

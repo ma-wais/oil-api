@@ -64,3 +64,19 @@ export const getStockUpdates = async (req, res) => {
     res.status(500).json({ message: 'Error fetching stock updates', error });
   }
 };
+
+export const deleteStockUpdate = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const stockUpdate = await StockUpdate.findByIdAndDelete(id);
+    if (!stockUpdate) return res.status(404).json({ message: 'Stock update not found' });
+
+    const product = await Product.findOne({ name: stockUpdate.productName });
+    if (!product) return res.status(404).json({ message: 'Product not found' });
+
+    res.status(200).json({ message: 'Stock update deleted successfully', stockUpdate });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting stock update', error });
+  }
+};
