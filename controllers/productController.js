@@ -75,6 +75,9 @@ export const deleteStockUpdate = async (req, res) => {
     const product = await Product.findOne({ name: stockUpdate.productName });
     if (!product) return res.status(404).json({ message: 'Product not found' });
 
+    product.stockInKg -= stockUpdate.stockInKg;
+    await product.save();
+
     res.status(200).json({ message: 'Stock update deleted successfully', stockUpdate });
   } catch (error) {
     res.status(500).json({ message: 'Error deleting stock update', error });
