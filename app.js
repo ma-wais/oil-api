@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 import bodyParser from "body-parser";
 import cors from "cors";
 import morgan from "morgan";
-import cookieParser from 'cookie-parser';
+import cookieParser from "cookie-parser";
 
 const app = express();
 
@@ -13,19 +13,20 @@ dotenv.config({ path: "./.env" });
 connectDB();
 
 const PORT = process.env.PORT || 5000;
-const whitelist = ['http://localhost:5173', "https://oil-teal.vercel.app"];
+// const whitelist = ["https://oil-teal.vercel.app"];
+const whitelist = ["http://localhost:5173", "http://localhost:5174"];
 
 const corsOptions = {
   origin: function (origin, callback) {
-    if (whitelist.indexOf(origin) !== -1 || !origin) {
+    if (whitelist.includes(origin) || !origin) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      callback(new Error("Not allowed by CORS"));
     }
   },
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true,
-  optionsSuccessStatus: 204
+  optionsSuccessStatus: 204,
 };
 
 app.use(cors(corsOptions));

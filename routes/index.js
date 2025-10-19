@@ -47,46 +47,50 @@ import {
 
 const router = express.Router();
 
-router.post("/products", createProduct);
-router.get("/products", getProducts);
-router.delete("/stock/:id", deleteStockUpdate);
+// Protected routes - require authentication
+router.post("/products", auth, createProduct);
+router.get("/products", auth, getProducts);
+router.delete("/stock/:id", auth, deleteStockUpdate);
 
-router.put("/stock/:name", updateStock);
-router.get("/stock-updates", getStockUpdates);
+router.put("/stock/:name", auth, updateStock);
+router.get("/stock-updates", auth, getStockUpdates);
 
 // router.get("/sale", getSaleLedger);
 // router.get("/ledger", getPurchaseLedger);
-router.post("/sales", createSaleInvoice);
-router.get("/sales", getSaleInvoices);
-router.delete("/sale/:id", deleteSaleInvoice);
+router.post("/sales", auth, createSaleInvoice);
+router.get("/sales", auth, getSaleInvoices);
+router.delete("/sale/:id", auth, deleteSaleInvoice);
 
-router.post("/purchase", createPurchaseInvoice);
-router.get("/purchase", getPurchaseInvoices);
-router.delete("/purchase/:id", deletePurchaseInvoice);
+router.post("/purchase", auth, createPurchaseInvoice);
+router.get("/purchase", auth, getPurchaseInvoices);
+router.delete("/purchase/:id", auth, deletePurchaseInvoice);
 
-router.post("/crushings", createCrushing);
-router.get("/crushings", getCrushingRecords);
-router.delete("/crushing/:id", deleteCrushing);
+router.post("/crushings", auth, createCrushing);
+router.get("/crushings", auth, getCrushingRecords);
+router.delete("/crushing/:id", auth, deleteCrushing);
 
-router.post("/contact", createContact);
-router.get("/contact", getContacts);
-router.put("/contact/:id", updateContact);
-router.delete("/contact/:id", deleteContact);
+router.post("/contact", auth, createContact);
+router.get("/contact", auth, getContacts);
+router.put("/contact/:id", auth, updateContact);
+router.delete("/contact/:id", auth, deleteContact);
 
-router.put("/balance", updateBalance);
-router.get("/ledgerrecords", getLedgerRecords);
-router.delete("/ledgerrecord/:id", deleteLedgerRecord);
+router.put("/balance", auth, updateBalance);
+router.get("/ledgerrecords", auth, getLedgerRecords);
+router.delete("/ledgerrecord/:id", auth, deleteLedgerRecord);
 
-router.get("/purchase/currentBillNo", getNextBillNo);
-router.get("/purchase/nextBillNo", incrementAndGetNextBillNo);
+router.get("/purchase/currentBillNo", auth, getNextBillNo);
+router.get("/purchase/nextBillNo", auth, incrementAndGetNextBillNo);
 
-router.get("/contacts/total-balance", getTotalBalance);
+router.get("/contacts/total-balance", auth, getTotalBalance);
 
 router.post(
   "/register",
   [
     check("username", "Username is required").not().isEmpty(),
     check("email", "Please include a valid email").isEmail(),
+    check("password", "Password must be at least 6 characters").isLength({
+      min: 6,
+    }),
   ],
   register
 );
