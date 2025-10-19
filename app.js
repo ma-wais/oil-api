@@ -13,8 +13,8 @@ dotenv.config({ path: "./.env" });
 connectDB();
 
 const PORT = process.env.PORT || 5000;
-// const whitelist = ["https://oil-teal.vercel.app"];
-const whitelist = ["http://localhost:5173", "http://localhost:5174"];
+const whitelist = ["https://oil-teal.vercel.app"];
+// const whitelist = ["http://localhost:5173"];
 
 const corsOptions = {
   origin: function (origin, callback) {
